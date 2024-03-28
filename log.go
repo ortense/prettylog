@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
+	"strings"
 	"time"
 
 	cs "github.com/ortense/consolestyle"
@@ -49,24 +50,26 @@ func formatTime(s string) string {
 	time := ""
 
 	if err == nil {
-		time = cs.Bold("🕛 " + date.Format(timeOutputLayout) + ":")
+		time = cs.Bold(date.Format(timeOutputLayout)) + " "
 	}
 
-	return time + " "
+	return time
 }
 
 func formatLevel(s string) string {
-	level := s
+	level := strings.ToUpper(s)
 
 	switch level {
 	case "ERROR":
 		level = cs.Bold(cs.Red(level + " 💥 "))
 	case "WARN":
-		level = cs.Bold(cs.Yellow(level + "  🚧 "))
+		level = cs.Bold(cs.Yellow(level + " 🚧 "))
 	case "INFO":
-		level = cs.Bold(cs.Cyan(level + "  💡 "))
+		level = cs.Bold(cs.Cyan(level + " 💡 "))
+	case "":
+		level = cs.Bold("📄 ")
 	default:
-		level = cs.Bold(level + " 🔍 ")
+		level = cs.Blue(cs.Bold(level + " 🔍 "))
 	}
 
 	return level
@@ -95,6 +98,7 @@ func Print(s string) {
 	data := parse(s)
 
 	if data == nil {
+		fmt.Println(s)
 		return
 	}
 
@@ -107,7 +111,7 @@ func Print(s string) {
 		extra := formatExtra(data.Extra)
 
 		fmt.Println(extra)
-	} else {
-		fmt.Println("")
 	}
+
+	fmt.Println("")
 }
